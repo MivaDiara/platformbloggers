@@ -11,5 +11,5 @@ export function updateBlogHandler(req: Request, res: Response) {
         return;
     }
     BlogsRepository.update(id, req.body);
-    res.sendStatus(HTTPStatus.OK);
+    res.sendStatus(HTTPStatus.NO_CONTENT);
 }
