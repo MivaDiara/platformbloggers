@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const paths_1 = require("./core/paths/paths");
 const blogs_router_1 = require("./blogs/router/blogs.router");
 const posts_router_1 = require("./posts/routes/posts-router");
+const testingRouter_1 = require("./testing/router/testingRouter");
 const setupApp = (app) => {
     app.use(express_1.default.json()); // middleware для парсинга JSON в теле запроса
     // основной роут
@@ -16,6 +17,7 @@ const setupApp = (app) => {
     });
     app.use(paths_1.BLOG_PATH, blogs_router_1.blogsRouter);
     app.use(paths_1.POSTS_PATH, posts_router_1.postsRouter);
+    app.use('/testing', testingRouter_1.testingRouter);
     return app;
 };
 exports.setupApp = setupApp;
