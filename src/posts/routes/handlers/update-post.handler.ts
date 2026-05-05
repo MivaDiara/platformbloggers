@@ -16,5 +16,5 @@ export function updatePostHandler(req: Request, res: Response) {
         return res.status(HTTPStatus.NOT_FOUND).send("Blog not found");
     }
     postsRepository.update(id, req.body);
-    res.status(HTTPStatus.OK);
+    res.sendStatus(HTTPStatus.OK);
 }
