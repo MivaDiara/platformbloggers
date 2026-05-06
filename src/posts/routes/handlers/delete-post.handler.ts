@@ -10,5 +10,5 @@ export function deletePostHandler(req: Request, res: Response) {
         return;
     }
     postsRepository.delete(id);
-    res.status(HTTPStatus.OK);
+    res.sendStatus(HTTPStatus.NO_CONTENT);
 }
