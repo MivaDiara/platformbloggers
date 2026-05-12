@@ -1,36 +1,44 @@
 import {PostsInputDTO} from "../dto/posts.input-dto";
 import {PostsType} from "../types/posts";
-import {db} from "../../db/db";
-import {BlogsRepository} from "../../blogs/repositories/blogs.repository";
+import {postCollection} from "../../db/db";
+import { ObjectId, WithId } from 'mongodb';
 
 
 export const postsRepository = {
-    findAll(): PostsType[]{
-        return db.posts;
+    async findAll(): Promise<WithId<PostsType>[]>{
+        return postCollection.find().toArray();
     },
-    findById(id: number): PostsType | null{
-        return db.posts.find(v => Number(v.id) === id) ?? null;
+    async findById(id: string): Promise<WithId<PostsType> | null> {
+        return postCollection.findOne({_id: new ObjectId(id)});
     },
-    create(newPost: PostsType): PostsType {
-        db.posts.push(newPost);
-        return newPost;
+    async create(newPost: PostsType): Promise<WithId<PostsType>> {
+        const insertResult = await postCollection.insertOne(newPost);
+        return { ...newPost, _id: insertResult.insertedId};
     },
-    update(id: number, dto: PostsInputDTO): void{
-        const post = db.posts.find(v => Number(v.id) === id);
-        if (!post) {
+    async update(id: string, dto: PostsInputDTO): Promise<void>{
+        const updatedPost = await postCollection.updateOne(
+            {
+                _id: new ObjectId(id),
+            },
+            {
+                $set: {
+                    title: dto.title,
+                    content: dto.content,
+                    shortDescription: dto.shortDescription,
+                    blogId: dto.blogId
+                }
+            }
+        );
+        if (updatedPost.matchedCount < 1) {
             throw new Error('No such post');
         }
-        post.title = dto.title;
-        post.content = dto.content;
-        post.shortDescription = dto.shortDescription;
-        post.blogId = dto.blogId;
-        const blog = dto.blogId ? BlogsRepository.findByID(Number(dto.blogId)) : null;
-        post.blogName = blog ? blog.name : "no blog id";
         return;
     },
-    delete(id: number): void{
-        const foundIndex = db.posts.findIndex(v => Number(v.id) === id);
-        db.posts.splice(foundIndex, 1);
+    async delete(id: string): Promise<void>{
+        const deletedPost = await postCollection.deleteOne({_id: new ObjectId(id)});
+        if (deletedPost.deletedCount < 1){
+            throw new Error('No such post');
+        }
         return
     }
 };

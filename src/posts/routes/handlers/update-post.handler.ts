@@ -4,18 +4,24 @@ import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {BlogsRepository} from "../../../blogs/repositories/blogs.repository";
 
 
-export function updatePostHandler(req: Request, res: Response) {
-    const id = Number(req.params.id);
-    const foundedPost = postsRepository.findById(id);
+export async function updatePostHandler(req: Request, res: Response) {
+    try{
+        const id = req.params.id as string;
+        const foundedPost = postsRepository.findById(id);
 
-    if(!foundedPost) {
-        res.status(HTTPStatus.NOT_FOUND).send("Post not found");
-        return;
+        if(!foundedPost) {
+            res.status(HTTPStatus.NOT_FOUND).send("Post not found");
+            return;
+        }
+        const foundBlog = BlogsRepository.findByID(req.body.blogId.toString());
+        if(!foundBlog) {
+            return res.status(HTTPStatus.NOT_FOUND).send("Blog not found");
+        }
+        await postsRepository.update(id, req.body);
+        res.sendStatus(HTTPStatus.NO_CONTENT);
     }
-    const foundBlog = BlogsRepository.findByID(Number(req.body.blogId));
-    if(!foundBlog) {
-        return res.status(HTTPStatus.NOT_FOUND).send("Blog not found");
+    catch (e) {
+        res.sendStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
     }
-    postsRepository.update(id, req.body);
-    res.sendStatus(HTTPStatus.NO_CONTENT);
+
 }

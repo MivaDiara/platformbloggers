@@ -1,32 +1,42 @@
 import {BlogsType} from "../types/blogs";
-import {db} from "../../db/db";
+import {blogsCollection} from "../../db/db";
 import {BlogsInputDTO} from "../dto/blogs.input-dto";
+import {WithId, ObjectId} from "mongodb";
 
 
 export const BlogsRepository = {
-    findAll(): BlogsType[] {
-        return db.blogs;
+    async findAll(): Promise<WithId<BlogsType>[]> {
+        return blogsCollection.find().toArray();
     },
-    findByID(id: number): BlogsType | null {
-        return db.blogs.find(v => Number(v.id) === id) ?? null;
+    async findByID(id: string): Promise<WithId<BlogsType> | null> {
+        return blogsCollection.findOne({_id: new ObjectId(id)});
     },
-    create(newBlog: BlogsType): BlogsType {
-            db.blogs.push(newBlog);
-            return newBlog;
+    async create(newBlog: BlogsType): Promise<WithId<BlogsType>> {
+            const insertBlog = await blogsCollection.insertOne(newBlog);
+            return {...newBlog, _id: insertBlog.insertedId};
         },
-    update(id: number, dto: BlogsInputDTO): void {
-        const blog = db.blogs.find(v => Number(v.id) === id);
-        if (!blog) {
+    async update(id: string, dto: BlogsInputDTO): Promise<void> {
+        const updatedBlog = await blogsCollection.updateOne({
+
+            _id: new ObjectId(id),
+        },
+            {
+                $set:{
+                    name: dto.name,
+                    description: dto.description,
+                    websiteUrl: dto.websiteUrl
+                }
+            })
+        if (updatedBlog.matchedCount < 1) {
             throw new Error('Blog not exist');
         }
-        blog.name = dto.name;
-        blog.description = dto.description;
-        blog.websiteUrl = dto.websiteUrl;
         return;
     },
-    delete(id: number): void {
-        const index = db.blogs.findIndex(v => Number(v.id) === id);
-        db.blogs.splice(index, 1);
+    async delete(id: string): Promise<void> {
+        const deletedBlog = await blogsCollection.deleteOne({_id: new ObjectId(id)});
+        if (deletedBlog.deletedCount < 1){
+            throw new Error('Blog not deleted');
+        }
         return
     }
 }

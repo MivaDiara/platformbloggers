@@ -1,5 +1,6 @@
-export type PostsType = {
-    title: string,
+export type postViewModel = {
+    id: string;
+    title: string;
     shortDescription: string,
     content: string,
     blogId: string,

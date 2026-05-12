@@ -2,16 +2,21 @@ import {Request, Response} from 'express';
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {BlogsRepository} from "../../repositories/blogs.repository";
 import {createErrorMessages} from "../../../core/validation/input-validation-result.middleware";
-export function deleteBlogHandler(
+export async function deleteBlogHandler(
     req: Request,
     res: Response,
 ){
-        const id = Number(req.params.id);
-        const blog = BlogsRepository.findByID(id);
+    try {
+        const id = req.params.id as string;
+        const blog = await BlogsRepository.findByID(id);
         if (!blog) {
-            res.status(HTTPStatus.NOT_FOUND).send("Такого блога нет").send(createErrorMessages([{ field: 'id', message: 'Vehicle not found' }]));
+            res.status(HTTPStatus.NOT_FOUND).send("Такого блога нет").send(createErrorMessages([{ field: 'id', message: 'Blog not found' }]));
             return;
         }
-        BlogsRepository.delete(id);
+        await BlogsRepository.delete(id);
         res.sendStatus(HTTPStatus.NO_CONTENT);
+    }
+    catch (e){
+        res.sendStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+    }
 }
