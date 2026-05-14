@@ -1,15 +1,32 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogHandler = updateBlogHandler;
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
 const blogs_repository_1 = require("../../repositories/blogs.repository");
+const input_validation_result_middleware_1 = require("../../../core/validation/input-validation-result.middleware");
 function updateBlogHandler(req, res) {
-    const id = Number(req.params.id);
-    let foundBlog = blogs_repository_1.BlogsRepository.findByID(id);
-    if (!foundBlog) {
-        res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Такого блога нет");
-        return;
-    }
-    blogs_repository_1.BlogsRepository.update(id, req.body);
-    res.status(HTTPStatus_1.HTTPStatus.OK);
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const id = req.params.id;
+            let foundBlog = blogs_repository_1.BlogsRepository.findByID(id);
+            if (!foundBlog) {
+                res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Такого блога нет").send((0, input_validation_result_middleware_1.createErrorMessages)([{ field: 'id', message: 'Vehicle not found' }]));
+                return;
+            }
+            yield blogs_repository_1.BlogsRepository.update(id, req.body);
+            res.sendStatus(HTTPStatus_1.HTTPStatus.NO_CONTENT);
+        }
+        catch (err) {
+            res.sendStatus(HTTPStatus_1.HTTPStatus.INTERNAL_SERVER_ERROR);
+        }
+    });
 }

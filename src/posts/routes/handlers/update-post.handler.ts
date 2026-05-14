@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {postsRepository} from "../../repositories/posts.repository";
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {BlogsRepository} from "../../../blogs/repositories/blogs.repository";
+import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
 
 
 export async function updatePostHandler(req: Request, res: Response) {

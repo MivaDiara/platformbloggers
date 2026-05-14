@@ -14,7 +14,6 @@ const contentValidation = body("content")
     .isLength({min: 1, max: 1000}).withMessage("Не правильная длина строки контента");
 const blogIdValidation = body("blogId")
     .isString()
-    .matches(/^\d+$/)
     .withMessage('blogId must contain only digits');
 
 export const postInputDtoValidation = [

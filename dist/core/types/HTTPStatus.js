@@ -9,4 +9,5 @@ exports.HTTPStatus = {
     CREATED: 201,
     NO_CONTENT: 204,
     UNAUTHORIZED: 401,
+    INTERNAL_SERVER_ERROR: 500,
 };

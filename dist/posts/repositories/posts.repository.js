@@ -1,36 +1,59 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
 const db_1 = require("../../db/db");
-const blogs_repository_1 = require("../../blogs/repositories/blogs.repository");
+const mongodb_1 = require("mongodb");
 exports.postsRepository = {
     findAll() {
-        return db_1.db.posts;
+        return __awaiter(this, void 0, void 0, function* () {
+            return db_1.postCollection.find().toArray();
+        });
     },
     findById(id) {
-        var _a;
-        return (_a = db_1.db.posts.find(v => Number(v.id) === id)) !== null && _a !== void 0 ? _a : null;
+        return __awaiter(this, void 0, void 0, function* () {
+            return db_1.postCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+        });
     },
     create(newPost) {
-        db_1.db.posts.push(newPost);
-        return newPost;
+        return __awaiter(this, void 0, void 0, function* () {
+            const insertResult = yield db_1.postCollection.insertOne(newPost);
+            return Object.assign(Object.assign({}, newPost), { _id: insertResult.insertedId });
+        });
     },
     update(id, dto) {
-        const post = db_1.db.posts.find(v => Number(v.id) === id);
-        if (!post) {
-            throw new Error('No such post');
-        }
-        post.title = dto.title;
-        post.content = dto.content;
-        post.shortDescription = dto.shortDescription;
-        post.blogId = dto.blogId;
-        const blog = dto.blogId ? blogs_repository_1.BlogsRepository.findByID(Number(dto.blogId)) : null;
-        post.blogName = blog ? blog.name : "no blog id";
-        return;
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedPost = yield db_1.postCollection.updateOne({
+                _id: new mongodb_1.ObjectId(id),
+            }, {
+                $set: {
+                    title: dto.title,
+                    content: dto.content,
+                    shortDescription: dto.shortDescription,
+                    blogId: dto.blogId
+                }
+            });
+            if (updatedPost.matchedCount < 1) {
+                throw new Error('No such post');
+            }
+            return;
+        });
     },
     delete(id) {
-        const foundIndex = db_1.db.posts.findIndex(v => Number(v.id) === id);
-        db_1.db.posts.splice(foundIndex, 1);
-        return;
+        return __awaiter(this, void 0, void 0, function* () {
+            const deletedPost = yield db_1.postCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            if (deletedPost.deletedCount < 1) {
+                throw new Error('No such post');
+            }
+            return;
+        });
     }
 };
