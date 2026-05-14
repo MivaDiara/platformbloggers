@@ -20,7 +20,7 @@ import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
                 blogName: foundBlog.name
             };
             const createdPost = await postsRepository.create(newPost);
-            const postViewModel = mapToPostViewModel(createdPost);
+            const postViewModel = mapToPostViewModel(createdPost, foundBlog);
             res.status(HTTPStatus.CREATED).send(postViewModel);
         }
         catch (e){
