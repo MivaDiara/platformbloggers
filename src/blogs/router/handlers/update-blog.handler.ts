@@ -6,7 +6,7 @@ import {createErrorMessages} from "../../../core/validation/input-validation-res
 export async function updateBlogHandler(req: Request, res: Response) {
     try{
         const id = req.params.id as string;
-        let foundBlog = BlogsRepository.findByID(id);
+        let foundBlog = await BlogsRepository.findByID(id);
         if (!foundBlog) {
             res.status(HTTPStatus.NOT_FOUND).send("Такого блога нет").send(createErrorMessages([{ field: 'id', message: 'Vehicle not found' }]));
             return;

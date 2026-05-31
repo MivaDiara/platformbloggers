@@ -3,4 +3,5 @@ export type BlogsType = {
     description: string,
     websiteUrl: string,
     createdAt: string,
+    isMemberShip: boolean
 }

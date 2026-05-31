@@ -17,12 +17,12 @@ function updatePostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const foundedPost = posts_repository_1.postsRepository.findById(id);
+            const foundedPost = yield posts_repository_1.postsRepository.findById(id);
             if (!foundedPost) {
                 res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Post not found");
                 return;
             }
-            const foundBlog = blogs_repository_1.BlogsRepository.findByID(req.body.blogId.toString());
+            const foundBlog = yield blogs_repository_1.BlogsRepository.findByID(req.body.blogId.toString());
             if (!foundBlog) {
                 return res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Blog not found");
             }

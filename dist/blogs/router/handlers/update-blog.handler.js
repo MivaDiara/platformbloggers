@@ -17,7 +17,7 @@ function updateBlogHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            let foundBlog = blogs_repository_1.BlogsRepository.findByID(id);
+            let foundBlog = yield blogs_repository_1.BlogsRepository.findByID(id);
             if (!foundBlog) {
                 res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Такого блога нет").send((0, input_validation_result_middleware_1.createErrorMessages)([{ field: 'id', message: 'Vehicle not found' }]));
                 return;

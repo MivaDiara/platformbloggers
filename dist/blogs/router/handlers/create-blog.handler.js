@@ -20,7 +20,8 @@ function createBlogHandler(req, res, next) {
                 name: req.body.name,
                 description: req.body.description,
                 websiteUrl: req.body.websiteUrl,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                isMemberShip: false
             };
             const createdBlog = yield blogs_repository_1.BlogsRepository.create(newBlog);
             const blogViewModel = (0, maps_to_blogs_to_view_1.mapToBlogViewModel)(createdBlog);

@@ -2,19 +2,19 @@ import {Request, Response} from "express";
 import {postsRepository} from "../../repositories/posts.repository";
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {BlogsRepository} from "../../../blogs/repositories/blogs.repository";
-import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
+
 
 
 export async function updatePostHandler(req: Request, res: Response) {
     try{
         const id = req.params.id as string;
-        const foundedPost = postsRepository.findById(id);
+        const foundedPost = await postsRepository.findById(id);
 
         if(!foundedPost) {
             res.status(HTTPStatus.NOT_FOUND).send("Post not found");
             return;
         }
-        const foundBlog = BlogsRepository.findByID(req.body.blogId.toString());
+        const foundBlog = await BlogsRepository.findByID(req.body.blogId.toString());
         if(!foundBlog) {
             return res.status(HTTPStatus.NOT_FOUND).send("Blog not found");
         }
