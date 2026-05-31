@@ -10,6 +10,7 @@ export function mapToPostViewModel(post: WithId<PostsType>, blog: WithId<BlogsTy
         shortDescription: post.shortDescription,
         content: post.content,
         blogId: post.blogId,
-        blogName: blog?.name || 'Blog not found'
+        blogName: blog?.name || 'Blog not found',
+        createdAt: post.createdAt
     }
 }

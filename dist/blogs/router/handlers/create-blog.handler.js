@@ -19,7 +19,8 @@ function createBlogHandler(req, res, next) {
             const newBlog = {
                 name: req.body.name,
                 description: req.body.description,
-                websiteUrl: req.body.websiteUrl
+                websiteUrl: req.body.websiteUrl,
+                createdAt: new Date().toISOString()
             };
             const createdBlog = yield blogs_repository_1.BlogsRepository.create(newBlog);
             const blogViewModel = (0, maps_to_blogs_to_view_1.mapToBlogViewModel)(createdBlog);

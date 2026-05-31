@@ -1,5 +1,6 @@
 export type BlogsType = {
     name: string,
     description: string,
-    websiteUrl: string
+    websiteUrl: string,
+    createdAt: string,
 }

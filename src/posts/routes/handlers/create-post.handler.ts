@@ -17,7 +17,8 @@ import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
                 shortDescription: req.body.shortDescription,
                 content: req.body.content,
                 blogId: req.body.blogId,
-                blogName: foundBlog.name
+                blogName: foundBlog.name,
+                createdAt: new Date().toISOString()
             };
             const createdPost = await postsRepository.create(newPost);
             const postViewModel = mapToPostViewModel(createdPost, foundBlog);

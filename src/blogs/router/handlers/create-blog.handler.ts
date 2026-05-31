@@ -12,7 +12,8 @@ export async function createBlogHandler(
         const newBlog: BlogsType = {
             name: req.body.name,
             description: req.body.description,
-            websiteUrl: req.body.websiteUrl
+            websiteUrl: req.body.websiteUrl,
+            createdAt: new Date().toISOString()
         }
         const createdBlog = await BlogsRepository.create(newBlog);
         const blogViewModel = mapToBlogViewModel(createdBlog);

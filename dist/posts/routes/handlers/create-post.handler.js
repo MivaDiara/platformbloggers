@@ -27,10 +27,11 @@ function createPostHandler(req, res) {
                 shortDescription: req.body.shortDescription,
                 content: req.body.content,
                 blogId: req.body.blogId,
-                blogName: foundBlog.name
+                blogName: foundBlog.name,
+                createdAt: new Date().toISOString()
             };
             const createdPost = yield posts_repository_1.postsRepository.create(newPost);
-            const postViewModel = (0, maps_to_post_view_1.mapToPostViewModel)(createdPost);
+            const postViewModel = (0, maps_to_post_view_1.mapToPostViewModel)(createdPost, foundBlog);
             res.status(HTTPStatus_1.HTTPStatus.CREATED).send(postViewModel);
         }
         catch (e) {
