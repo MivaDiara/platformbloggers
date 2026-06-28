@@ -11,9 +11,10 @@ const update_post_handler_1 = require("./handlers/update-post.handler");
 const delete_post_handler_1 = require("./handlers/delete-post.handler");
 const post_dto_validation_1 = require("../validation/post.dto-validation");
 const super_admin_guard_middleware_1 = require("../../auth/middlewares/super-admin.guard-middleware.");
+const query_search_validation_1 = require("../validation/query-search-validation");
 exports.postsRouter = (0, express_1.Router)();
 exports.postsRouter
-    .get("", getList_post_handler_1.getListsPostHandler)
+    .get("", query_search_validation_1.postQueryValidation, getList_post_handler_1.getListsPostHandler)
     .get("/:id", params_id_validation_middleware_1.idValidation, input_validation_result_middleware_1.inputValidationResultMiddleware, get_post_handler_1.getPostHandler)
     .post("", super_admin_guard_middleware_1.superAdminGuardMiddleWare, post_dto_validation_1.postInputDtoValidation, input_validation_result_middleware_1.inputValidationResultMiddleware, create_post_handler_1.createPostHandler)
     .put("/:id", super_admin_guard_middleware_1.superAdminGuardMiddleWare, params_id_validation_middleware_1.idValidation, post_dto_validation_1.postInputDtoValidation, input_validation_result_middleware_1.inputValidationResultMiddleware, update_post_handler_1.updatePostHandler)

@@ -10,15 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getBlogListHandler = getBlogListHandler;
-const blogs_repository_1 = require("../../repositories/blogs.repository");
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
-const maps_to_blogs_to_view_1 = require("../../mapping/maps-to-blogs-to-view");
+const blogs_service_1 = require("../../application/blogs.service");
+const express_validator_1 = require("express-validator");
+const set_default_sort_and_pagination_1 = require("../../../core/helpers/set-default-sort-and-pagination");
+const map_to_blog_list_paginated_output_util_1 = require("../mappers/map-to-blog-list-paginated-output.util");
 function getBlogListHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const blogs = yield blogs_repository_1.BlogsRepository.findAll();
-            const blogsViewModel = blogs.map(maps_to_blogs_to_view_1.mapToBlogViewModel);
-            res.status(HTTPStatus_1.HTTPStatus.OK).send(blogsViewModel);
+            const sanitizedQuery = (0, express_validator_1.matchedData)(req, {
+                locations: ['query'],
+                includeOptionals: true,
+            });
+            const queryInput = (0, set_default_sort_and_pagination_1.setDefaultSortAndPaginationIfNotExist)(sanitizedQuery);
+            const { items, totalCount } = yield blogs_service_1.blogsService.findMany(queryInput);
+            const blogListOutput = (0, map_to_blog_list_paginated_output_util_1.mapToBlogListPaginatedOutput)(items, {
+                pageNumber: queryInput.pageNumber,
+                pageSize: queryInput.pageSize,
+                totalCount,
+            });
+            res.status(HTTPStatus_1.HTTPStatus.OK).send(blogListOutput);
         }
         catch (error) {
             res.sendStatus(HTTPStatus_1.HTTPStatus.NOT_FOUND);

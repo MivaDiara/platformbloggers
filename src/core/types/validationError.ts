@@ -1,4 +1,9 @@
+import {HTTPStatus} from "./HTTPStatus";
+
+
 export type ValidationErrorType = {
-    field: string;
-    message: string;
-};
+    status: HTTPStatus;
+    detail: string;
+    source?: string;
+    code?: string;
+}

@@ -12,10 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogsRepository = void 0;
 const db_1 = require("../../db/db");
 const mongodb_1 = require("mongodb");
+const repository_not_found_error_1 = require("../../core/errors/repository-not-found-error");
 exports.BlogsRepository = {
-    findAll() {
+    findAll(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            return db_1.blogsCollection.find().toArray();
+            const { pageNumber, pageSize, sortBy, sortDirection, searchBlogNameTerm } = queryDto;
+            const skip = (pageNumber - 1) * pageSize;
+            const filter = {};
+            if (searchBlogNameTerm) {
+                filter.$or = [];
+                if (searchBlogNameTerm) {
+                    filter.$or.push({ "name": { "$regex": `${searchBlogNameTerm}`, "$options": "i" } });
+                }
+            }
+            const items = yield db_1.blogsCollection
+                .find(filter)
+                .sort({ [sortBy]: sortDirection })
+                .skip(skip)
+                .limit(pageSize)
+                .toArray();
+            const totalCount = yield db_1.blogsCollection.countDocuments(filter);
+            return { items, totalCount };
         });
     },
     findByID(id) {
@@ -23,10 +40,19 @@ exports.BlogsRepository = {
             return db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
+    findByIdOrFail(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = db_1.blogsCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!res) {
+                throw new repository_not_found_error_1.RepositoryNotFoundError("Blog is not exist");
+            }
+            return res;
+        });
+    },
     create(newBlog) {
         return __awaiter(this, void 0, void 0, function* () {
             const insertBlog = yield db_1.blogsCollection.insertOne(newBlog);
-            return Object.assign(Object.assign({}, newBlog), { _id: insertBlog.insertedId });
+            return insertBlog.insertedId.toString();
         });
     },
     update(id, dto) {

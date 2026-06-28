@@ -10,18 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deletePostHandler = deletePostHandler;
-const posts_repository_1 = require("../../repositories/posts.repository");
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
+const posts_service_1 = require("../../application/posts.service");
 function deletePostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const post = yield posts_repository_1.postsRepository.findById(id);
-            if (!post) {
-                res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Post not found");
-                return;
-            }
-            yield posts_repository_1.postsRepository.delete(id);
+            yield posts_service_1.postsService.delete(id);
             res.sendStatus(HTTPStatus_1.HTTPStatus.NO_CONTENT);
         }
         catch (err) {

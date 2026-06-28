@@ -10,27 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createPostHandler = createPostHandler;
-const posts_repository_1 = require("../../repositories/posts.repository");
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
-const blogs_repository_1 = require("../../../blogs/repositories/blogs.repository");
 const maps_to_post_view_1 = require("../../mapping/maps-to-post-view");
+const blogs_service_1 = require("../../../blogs/application/blogs.service");
+const posts_service_1 = require("../../application/posts.service");
 function createPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const foundBlog = yield blogs_repository_1.BlogsRepository.findByID(req.body.blogId.toString());
-            if (!foundBlog) {
-                res.status(404).send("No blog found.");
-                return;
-            }
-            const newPost = {
-                title: req.body.title,
-                shortDescription: req.body.shortDescription,
-                content: req.body.content,
-                blogId: req.body.blogId,
-                blogName: foundBlog.name,
-                createdAt: new Date().toISOString()
-            };
-            const createdPost = yield posts_repository_1.postsRepository.create(newPost);
+            const foundBlog = yield blogs_service_1.blogsService.findOneOrFail(req.body.blogId.toString());
+            const createdPostId = yield posts_service_1.postsService.create(req.body);
+            const createdPost = yield posts_service_1.postsService.findOneOrFail(createdPostId);
             const postViewModel = (0, maps_to_post_view_1.mapToPostViewModel)(createdPost, foundBlog);
             res.status(HTTPStatus_1.HTTPStatus.CREATED).send(postViewModel);
         }

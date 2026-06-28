@@ -1,23 +1,16 @@
 import {NextFunction, Request, Response} from "express";
-import {BlogsType} from "../../types/blogs";
-import {BlogsRepository} from "../../repositories/blogs.repository";
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {BlogsInputDTO} from "../../dto/blogs.input-dto";
 import {mapToBlogViewModel} from "../../mapping/maps-to-blogs-to-view";
+import {blogsService} from "../../application/blogs.service";
 
 export async function createBlogHandler(
     req: Request<{}, {}, BlogsInputDTO>, res: Response, next: NextFunction
 ){
     try{
-        const newBlog: BlogsType = {
-            name: req.body.name,
-            description: req.body.description,
-            websiteUrl: req.body.websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMemberShip: false
-        }
-        const createdBlog = await BlogsRepository.create(newBlog);
-        const blogViewModel = mapToBlogViewModel(createdBlog);
+        const createdBlogId = await blogsService.create(req.body);
+        const createdBlog = await blogsService.findOneOrFail(createdBlogId);
+        const blogViewModel = mapToBlogViewModel(createdBlog!);
         res.status(HTTPStatus.CREATED).send(blogViewModel);
     }
     catch(error){

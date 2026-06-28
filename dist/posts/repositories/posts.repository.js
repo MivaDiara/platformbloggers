@@ -12,10 +12,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.postsRepository = void 0;
 const db_1 = require("../../db/db");
 const mongodb_1 = require("mongodb");
+const repository_not_found_error_1 = require("../../core/errors/repository-not-found-error");
 exports.postsRepository = {
-    findAll() {
+    findAll(queryDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            return db_1.postCollection.find().toArray();
+            const { pageNumber, pageSize, sortBy, sortDirection, searchPostTitleTerm } = queryDto;
+            const skip = (pageNumber - 1) * pageSize;
+            const filter = {};
+            if (searchPostTitleTerm) {
+                filter.$or = [];
+                if (searchPostTitleTerm) {
+                    filter.$or.push({ "title": { "$regex": `${searchPostTitleTerm}`, "$options": "i" } });
+                }
+            }
+            const items = yield db_1.postCollection
+                .find(filter)
+                .sort({ [sortBy]: sortDirection })
+                .skip(skip)
+                .limit(pageSize)
+                .toArray();
+            const totalCount = yield db_1.postCollection.countDocuments(filter);
+            return { items, totalCount };
         });
     },
     findById(id) {
@@ -23,10 +40,25 @@ exports.postsRepository = {
             return db_1.postCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
+    findByIdOrFail(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const res = yield db_1.postCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            if (!res) {
+                throw new repository_not_found_error_1.RepositoryNotFoundError("Post doesnt exist");
+            }
+            return res;
+        });
+    },
+    findAllInBlogs(blogId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const filter = { blogId: blogId };
+            return db_1.postCollection.find(filter).toArray();
+        });
+    },
     create(newPost) {
         return __awaiter(this, void 0, void 0, function* () {
             const insertResult = yield db_1.postCollection.insertOne(newPost);
-            return Object.assign(Object.assign({}, newPost), { _id: insertResult.insertedId });
+            return insertResult.insertedId.toString();
         });
     },
     update(id, dto) {

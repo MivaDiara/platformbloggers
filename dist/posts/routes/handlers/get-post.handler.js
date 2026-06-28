@@ -10,28 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPostHandler = getPostHandler;
-const posts_repository_1 = require("../../repositories/posts.repository");
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
 const maps_to_post_view_1 = require("../../mapping/maps-to-post-view");
-const blogs_repository_1 = require("../../../blogs/repositories/blogs.repository");
+const posts_service_1 = require("../../application/posts.service");
+const blogs_service_1 = require("../../../blogs/application/blogs.service");
 function getPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const post = yield posts_repository_1.postsRepository.findById(id);
-            if (!post) {
-                res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Post not found");
-                return;
-            }
-            const blog = yield blogs_repository_1.BlogsRepository.findByID(post.blogId.toString());
-            if (!blog) {
-                res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Blog not found");
-                return;
-            }
+            const post = yield posts_service_1.postsService.findOneOrFail(id);
+            const blog = yield blogs_service_1.blogsService.findOneOrFail(post.blogId.toString());
             const postMapping = (0, maps_to_post_view_1.mapToPostViewModel)(post, blog);
             res.status(HTTPStatus_1.HTTPStatus.OK).json(postMapping);
         }
         catch (e) {
+            res.sendStatus(HTTPStatus_1.HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     });
 }

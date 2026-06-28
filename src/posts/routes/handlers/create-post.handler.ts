@@ -4,24 +4,15 @@ import {postsRepository} from "../../repositories/posts.repository";
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {BlogsRepository} from "../../../blogs/repositories/blogs.repository";
 import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
+import {blogsService} from "../../../blogs/application/blogs.service";
+import {postsService} from "../../application/posts.service";
 
     export async function createPostHandler(req: Request, res: Response) {
         try {
-            const foundBlog = await BlogsRepository.findByID(req.body.blogId.toString());
-            if(!foundBlog) {
-                res.status(404).send("No blog found.");
-                return;
-            }
-            const newPost: PostsType = {
-                title: req.body.title,
-                shortDescription: req.body.shortDescription,
-                content: req.body.content,
-                blogId: req.body.blogId,
-                blogName: foundBlog.name,
-                createdAt: new Date().toISOString()
-            };
-            const createdPost = await postsRepository.create(newPost);
-            const postViewModel = mapToPostViewModel(createdPost, foundBlog);
+            const foundBlog = await blogsService.findOneOrFail(req.body.blogId.toString());
+            const createdPostId = await postsService.create(req.body);
+            const createdPost = await postsService.findOneOrFail(createdPostId);
+            const postViewModel = mapToPostViewModel(createdPost!, foundBlog!);
             res.status(HTTPStatus.CREATED).send(postViewModel);
         }
         catch (e){

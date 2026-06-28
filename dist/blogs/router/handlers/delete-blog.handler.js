@@ -11,18 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteBlogHandler = deleteBlogHandler;
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
-const blogs_repository_1 = require("../../repositories/blogs.repository");
-const input_validation_result_middleware_1 = require("../../../core/validation/input-validation-result.middleware");
+const blogs_service_1 = require("../../application/blogs.service");
+const repository_not_found_error_1 = require("../../../core/errors/repository-not-found-error");
 function deleteBlogHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            const blog = yield blogs_repository_1.BlogsRepository.findByID(id);
+            const blog = yield blogs_service_1.blogsService.findOneOrFail(id);
             if (!blog) {
-                res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Такого блога нет").send((0, input_validation_result_middleware_1.createErrorMessages)([{ field: 'id', message: 'Blog not found' }]));
-                return;
+                throw new repository_not_found_error_1.RepositoryNotFoundError("Blog doesnt exist");
             }
-            yield blogs_repository_1.BlogsRepository.delete(id);
+            yield blogs_service_1.blogsService.delete(id);
             res.sendStatus(HTTPStatus_1.HTTPStatus.NO_CONTENT);
         }
         catch (e) {

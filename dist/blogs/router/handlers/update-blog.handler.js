@@ -11,18 +11,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBlogHandler = updateBlogHandler;
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
-const blogs_repository_1 = require("../../repositories/blogs.repository");
-const input_validation_result_middleware_1 = require("../../../core/validation/input-validation-result.middleware");
+const blogs_service_1 = require("../../application/blogs.service");
 function updateBlogHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const id = req.params.id;
-            let foundBlog = yield blogs_repository_1.BlogsRepository.findByID(id);
-            if (!foundBlog) {
-                res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Такого блога нет").send((0, input_validation_result_middleware_1.createErrorMessages)([{ field: 'id', message: 'Vehicle not found' }]));
-                return;
-            }
-            yield blogs_repository_1.BlogsRepository.update(id, req.body);
+            yield blogs_service_1.blogsService.update(id, req.body);
             res.sendStatus(HTTPStatus_1.HTTPStatus.NO_CONTENT);
         }
         catch (err) {

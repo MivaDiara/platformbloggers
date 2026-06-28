@@ -8,11 +8,14 @@ import {updatePostHandler} from "./handlers/update-post.handler";
 import {deletePostHandler} from "./handlers/delete-post.handler";
 import {postInputDtoValidation} from "../validation/post.dto-validation";
 import {superAdminGuardMiddleWare} from "../../auth/middlewares/super-admin.guard-middleware.";
+import {paginationAndSortingValidation} from "../../core/validation/query-pagination-sorting";
+import {PostSortField} from "../input/post-sort-field";
+import {postQueryValidation} from "../validation/query-search-validation";
 
 export const postsRouter = Router();
 
 postsRouter
-.get("", getListsPostHandler )
+.get("", postQueryValidation, getListsPostHandler )
 .get("/:id", idValidation, inputValidationResultMiddleware, getPostHandler)
 .post("",superAdminGuardMiddleWare, postInputDtoValidation, inputValidationResultMiddleware, createPostHandler)
 .put("/:id", superAdminGuardMiddleWare, idValidation, postInputDtoValidation ,inputValidationResultMiddleware, updatePostHandler)

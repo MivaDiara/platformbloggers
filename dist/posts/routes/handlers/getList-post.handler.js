@@ -10,23 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getListsPostHandler = getListsPostHandler;
-const posts_repository_1 = require("../../repositories/posts.repository");
 const HTTPStatus_1 = require("../../../core/types/HTTPStatus");
-const maps_to_post_view_1 = require("../../mapping/maps-to-post-view");
-const blogs_repository_1 = require("../../../blogs/repositories/blogs.repository");
+const posts_service_1 = require("../../application/posts.service");
+const express_validator_1 = require("express-validator");
+const set_default_sort_and_pagination_1 = require("../../../core/helpers/set-default-sort-and-pagination");
+const map_to_post_list_paginated_output_util_1 = require("../../mappers/map-to-post-list-paginated-output.util");
 function getListsPostHandler(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const posts = yield posts_repository_1.postsRepository.findAll();
-            const postsViewModel = yield Promise.all(posts.map((post) => __awaiter(this, void 0, void 0, function* () {
-                const blog = yield blogs_repository_1.BlogsRepository.findByID(post.blogId.toString());
-                if (!blog) {
-                    res.status(HTTPStatus_1.HTTPStatus.NOT_FOUND).send("Blog not found");
-                    return;
-                }
-                return (0, maps_to_post_view_1.mapToPostViewModel)(post, blog);
-            })));
-            res.status(HTTPStatus_1.HTTPStatus.OK).send(postsViewModel);
+            const sanitizedQuery = (0, express_validator_1.matchedData)(req, {
+                locations: ['query'],
+                includeOptionals: true,
+            });
+            const queryInput = (0, set_default_sort_and_pagination_1.setDefaultSortAndPaginationIfNotExist)(sanitizedQuery);
+            const { items, totalCount } = yield posts_service_1.postsService.findMany(queryInput);
+            const postLostOutput = (0, map_to_post_list_paginated_output_util_1.mapToPostListPaginatedOutput)(items, {
+                pageNumber: queryInput.pageNumber,
+                pageSize: queryInput.pageSize,
+                totalCount
+            });
+            res.status(HTTPStatus_1.HTTPStatus.OK).send(postLostOutput);
         }
         catch (error) {
             res.sendStatus(HTTPStatus_1.HTTPStatus.NOT_FOUND);
