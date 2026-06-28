@@ -19,7 +19,7 @@ export const blogsService = {
             name: dto.name,
             description: dto.description,
             websiteUrl: dto.websiteUrl,
-            createdAt: new Date().toDateString(),
+            createdAt: new Date().toISOString(),
             isMemberShip: false
         }
         return await BlogsRepository.create(createdBlog);
