@@ -33,7 +33,7 @@ export const blogsService = {
         return;
     },
     async findPosts(id:string): Promise<WithId<PostsType>[]>{
-        return await postsRepository.findAllInBlogs(id);
+        return await postsRepository.findAllInBlogs(id); //
     },
     async createPost(id: string, dto: PostsInBlogInputDto): Promise<string> {
         const foundBlog = await BlogsRepository.findByIdOrFail(id);
