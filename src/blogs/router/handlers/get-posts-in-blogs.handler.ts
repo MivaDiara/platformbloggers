@@ -7,14 +7,21 @@ import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-d
 import {PostSortField} from "../../../posts/input/post-sort-field";
 import {postsService} from "../../../posts/application/posts.service";
 import {mapToPostListPaginatedOutput} from "../../../posts/mappers/map-to-post-list-paginated-output.util";
+import {BlogsRepository} from "../../repositories/blogs.repository";
 
 export async function getPostsInBlogHandler(req: Request, res: Response){
+    const  id  = req.params.id as string;
+    const existBlog = await blogsService.findOneOrFail(id);
+    if(!existBlog){
+        res.sendStatus(HTTPStatus.NOT_FOUND);
+        return;
+    }
     const sanitizedQuery = matchedData(req,{
         locations: ['query'],
         includeOptionals: true,
     });
     const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
-    const {items, totalCount} = await postsService.findMany(queryInput);
+    const {items, totalCount} = await blogsService.findPosts(queryInput, id);
     const postListOutput = mapToPostListPaginatedOutput(items, {
         pageNumber: queryInput.pageNumber,
         pageSize: queryInput.pageSize,

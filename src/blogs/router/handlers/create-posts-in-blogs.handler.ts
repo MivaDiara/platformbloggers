@@ -11,7 +11,7 @@ export async function createPostsInBlogHandler(req: Request, res: Response) {
         const createdPostId = await blogsService.createPost(id, req.body);
         const createdPost = await postsService.findOneOrFail(createdPostId);
         const postViewModel = mapToPostViewModel(createdPost!, foundBlog!);
-        res.status(HTTPStatus.OK).send(postViewModel);
+        res.status(HTTPStatus.CREATED).send(postViewModel);
     }
     catch(err){
         res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
