@@ -4,6 +4,7 @@ import {BlogsInputDTO} from "../dto/blogs.input-dto";
 import {WithId, ObjectId} from "mongodb";
 import {RepositoryNotFoundError} from "../../core/errors/repository-not-found-error";
 import {BlogQueryInput} from "../input/blog-query.input";
+import {query} from "express-validator";
 
 
 export const BlogsRepository = {
@@ -13,17 +14,18 @@ export const BlogsRepository = {
             pageSize,
             sortBy,
             sortDirection,
-            searchBlogNameTerm
+            searchNameTerm
         } = queryDto
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {};
 
-        if (searchBlogNameTerm){
+        if (searchNameTerm){
             filter.$or = [];
-            if (searchBlogNameTerm){
-                filter.$or.push({"name":{"$regex": `${searchBlogNameTerm}`, "$options":"i"}});
+            if (searchNameTerm){
+                filter.$or.push({"name":{"$regex": `${searchNameTerm}`, "$options":"i"}});
             }
         }
+        console.log('🔍 searchNameTerm:', searchNameTerm);
         const items = await blogsCollection
             .find(filter)
             .sort({[sortBy]: sortDirection})

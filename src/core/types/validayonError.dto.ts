@@ -8,4 +8,4 @@ type ValidationErrorOutput  = {
 };
 
 
-export type ValidationErrorListOutput  = { errorMessages: ValidationErrorOutput[] };
+export type ValidationErrorListOutput  = { errorsMessages: ValidationErrorOutput[] };

@@ -16,10 +16,10 @@ export async function createPostsInBlogHandler(req: Request, res: Response) {
     }
     catch(err){
         if(err instanceof RepositoryNotFoundError) {
-            res.status(HTTPStatus.NOT_FOUND);
+            res.sendStatus(HTTPStatus.NOT_FOUND);
         }
         else{
-            res.status(HTTPStatus.INTERNAL_SERVER_ERROR);
+            res.sendStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
