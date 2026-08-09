@@ -24,5 +24,5 @@ blogsRouter
 .post('', superAdminGuardMiddleWare, blogInputDtoValidation, inputValidationResultMiddleware, createBlogHandler)
 .delete('/:id', superAdminGuardMiddleWare ,idValidation, inputValidationResultMiddleware, deleteBlogHandler)
 .put('/:id', superAdminGuardMiddleWare, idValidation, blogInputDtoValidation, inputValidationResultMiddleware, updateBlogHandler)
-.get('/:id/posts', idValidation, paginationAndSortingValidation(PostSortField), inputValidationResultMiddleware, getPostsInBlogHandler)
+.get('/:id/posts', idValidation,  paginationAndSortingValidation(PostSortField), inputValidationResultMiddleware, getPostsInBlogHandler)
 .post('/:id/posts', idValidation, superAdminGuardMiddleWare, postInputDtoValidation,inputValidationResultMiddleware, createPostsInBlogHandler);

@@ -37,7 +37,7 @@ export const BlogsRepository = {
         return blogsCollection.findOne({_id: new ObjectId(id)});
     },
     async findByIdOrFail(id: string): Promise<WithId<BlogsType> | null> {
-        const res = blogsCollection.findOne({_id: new ObjectId(id)});
+        const res = await blogsCollection.findOne({_id: new ObjectId(id)});
         if (!res){
             throw new RepositoryNotFoundError("Blog is not exist")
         }

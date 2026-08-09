@@ -3,6 +3,7 @@ import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {blogsService} from "../../application/blogs.service";
 import {postsService} from "../../../posts/application/posts.service";
 import {mapToPostViewModel} from "../../../posts/mapping/maps-to-post-view";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
 
 export async function createPostsInBlogHandler(req: Request, res: Response) {
     try{
@@ -14,6 +15,11 @@ export async function createPostsInBlogHandler(req: Request, res: Response) {
         res.status(HTTPStatus.CREATED).send(postViewModel);
     }
     catch(err){
-        res.send(HTTPStatus.INTERNAL_SERVER_ERROR);
+        if(err instanceof RepositoryNotFoundError) {
+            res.status(HTTPStatus.NOT_FOUND);
+        }
+        else{
+            res.status(HTTPStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

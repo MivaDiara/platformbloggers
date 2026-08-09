@@ -9,16 +9,15 @@ export async function getBlogHandler(req: Request, res: Response) {
     try{
         const id = req.params.id as string;
         const blog = await blogsService.findOneOrFail(id);
-        if (!blog) {
-            res.status(HTTPStatus.NOT_FOUND).send({error: "No blog found"});
-            return;
-        }
-        const blogViewModel = mapToBlogOutput(blog);
+        const blogViewModel = mapToBlogOutput(blog!);
         res.send(blogViewModel);
     }
     catch(err){
-        if (err instanceof RepositoryNotFoundError) {
-            res.sendStatus(HTTPStatus.INTERNAL_SERVER_ERROR).send(`err: ${err}`);
+        if(err instanceof RepositoryNotFoundError) {
+            res.status(HTTPStatus.NOT_FOUND).send({error: err});
+        }
+        else{
+            res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send(`${err}`);
         }
     }
 }
