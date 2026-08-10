@@ -4,9 +4,12 @@ import {paginationAndSortingDefault} from "../validation/query-pagination-sortin
 export function setDefaultSortAndPaginationIfNotExist<P = string>(
     query: Partial<PaginationAndSorting<P>>,
 ): PaginationAndSorting<P>{
-    return{
+    console.log('📦 Вход в setDefaults:', query);
+    const result = {
         ...paginationAndSortingDefault,
         ...query,
         sortBy: (query.sortBy ?? paginationAndSortingDefault.sortBy) as P,
-    };
+    }
+    console.log('📦 Выход из setDefaults:', result);
+    return result;
 }

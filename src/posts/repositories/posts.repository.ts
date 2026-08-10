@@ -8,6 +8,9 @@ import {PostQueryInput} from "../input/post-query.input";
 
 export const postsRepository = {
     async findAll(queryDto: PostQueryInput): Promise<{items: WithId<PostsType>[], totalCount: number}>{
+        console.log('📦 Весь queryDto:', queryDto);
+        console.log('📦 sortBy в репозитории:', queryDto.sortBy);
+        console.log('📦 sortDirection:', queryDto.sortDirection);
         const {
             pageNumber,
             pageSize,

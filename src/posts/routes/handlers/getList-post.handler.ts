@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {postsService} from "../../application/posts.service";
-import {matchedData} from "express-validator";
+import {matchedData, query} from "express-validator";
 import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-default-sort-and-pagination";
 import {PostSortField} from "../../input/post-sort-field";
 import {mapToPostListPaginatedOutput} from "../../mappers/map-to-post-list-paginated-output.util";
@@ -13,6 +13,11 @@ export async function getListsPostHandler(req: Request, res: Response) {
             locations: ['query'],
             includeOptionals: true,
         });
+        console.log('🧼 sanitizedQuery ПОСЛЕ matchedData:', sanitizedQuery);
+        console.log('🧼 sanitizedQuery:', sanitizedQuery);
+        console.log('🔥 req.query:', req.query);
+        console.log('🔥 sortBy:', req.query.sortBy);
+        console.log('🔥 sortDirection:', req.query.sortDirection);
         const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
         const {items, totalCount} = await postsService.findMany(queryInput);
         const postLostOutput = mapToPostListPaginatedOutput(items, {

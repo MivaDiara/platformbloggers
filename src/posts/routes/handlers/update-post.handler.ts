@@ -11,6 +11,7 @@ import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found
 export async function updatePostHandler(req: Request, res: Response) {
     try{
         const id = req.params.id as string;
+        await postsService.findOneOrFail(id);
         await postsService.update(req.body, id);
         res.sendStatus(HTTPStatus.NO_CONTENT);
     }
