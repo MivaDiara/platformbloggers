@@ -15,16 +15,13 @@ export function mapToPostListPaginatedOutput(posts: WithId<PostsType>[],
         totalCount: meta.totalCount,
         items: posts.map(
             (post): PostDataOutput => ({
-                type: ResourceType.Posts,
                 id: post._id.toString(),
-                attributes: {
-                    title: post.title,
-                    shortDescription: post.shortDescription,
-                    content: post.content,
-                    createdAt: post.createdAt,
-                    blogId: post.blogId,
-                    blogName: post.blogName,
-                }
+                title: post.title,
+                shortDescription: post.shortDescription,
+                content: post.content,
+                createdAt: post.createdAt,
+                blogId: post.blogId,
+                blogName: post.blogName,
             })
         )
     };

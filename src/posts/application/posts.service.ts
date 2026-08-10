@@ -19,7 +19,7 @@ export const postsService = {
             shortDescription: dto.shortDescription,
             content: dto.content,
             blogId: dto.blogId,
-            createdAt: new Date().toDateString(),
+            createdAt: new Date().toISOString(),
             blogName: foundBlog!.name
         }
         return await postsRepository.create(createdPost)

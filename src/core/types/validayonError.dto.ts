@@ -1,10 +1,8 @@
 import {HTTPStatus} from "./HTTPStatus";
 
 type ValidationErrorOutput  = {
-    status: HTTPStatus;
-    detail: string;
-    source:  { pointer: string };
-    code: string | null;
+    message: string;
+    field: string;
 };
 
 

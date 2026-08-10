@@ -5,6 +5,7 @@ import {matchedData} from "express-validator";
 import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-default-sort-and-pagination";
 import {PostSortField} from "../../input/post-sort-field";
 import {mapToPostListPaginatedOutput} from "../../mappers/map-to-post-list-paginated-output.util";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
 
 export async function getListsPostHandler(req: Request, res: Response) {
     try{
@@ -21,7 +22,12 @@ export async function getListsPostHandler(req: Request, res: Response) {
         })
         res.status(HTTPStatus.OK).send(postLostOutput);
     }
-    catch(error){
-        res.sendStatus(HTTPStatus.NOT_FOUND);
+    catch(err){
+        if(err instanceof RepositoryNotFoundError) {
+            res.status(HTTPStatus.NOT_FOUND).send({error: err});
+        }
+        else{
+            res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send(`${err}`);
+        }
     }
 }

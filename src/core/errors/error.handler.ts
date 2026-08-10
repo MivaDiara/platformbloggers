@@ -11,8 +11,8 @@ export function handleError(err: unknown, res: Response): void {
             createErrorMessages(
                 [
                     {
-                        status: HTTPStatus.NOT_FOUND,
-                        detail: err.message
+                        message: err.message,
+                        field: err.message
                     },
                 ]),
         );
@@ -25,10 +25,8 @@ export function handleError(err: unknown, res: Response): void {
         res.status(httpStatus).send(
             createErrorMessages([
                 {
-                    status: httpStatus,
-                    source: err.source,
-                    detail: err.message,
-                    code: err.code,
+                    message: err.message,
+                    field: err.field,
                 },
             ]),
         );

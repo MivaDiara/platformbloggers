@@ -4,6 +4,7 @@ import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
 import {postsService} from "../../application/posts.service";
 import {blogsService} from "../../../blogs/application/blogs.service";
+import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
 
 export async function getPostHandler(req: Request, res: Response) {
     try{
@@ -13,7 +14,12 @@ export async function getPostHandler(req: Request, res: Response) {
         const postMapping = mapToPostViewModel(post!, blog!);
         res.status(HTTPStatus.OK).json(postMapping);
     }
-    catch(e){
-        res.sendStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+    catch(err){
+        if(err instanceof RepositoryNotFoundError) {
+            res.status(HTTPStatus.NOT_FOUND).send({error: err});
+        }
+        else{
+            res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send(`${err}`);
+        }
     }
 }

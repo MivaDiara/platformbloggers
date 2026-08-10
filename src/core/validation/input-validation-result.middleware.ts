@@ -13,10 +13,8 @@ export const createErrorMessages = (
 ): ValidationErrorListOutput => {
     return {
         errorsMessages: errors.map((error) => ({
-            status: error.status,
-            detail: error.detail, //error message
-            source: { pointer: error.source ?? '' }, //error field
-            code: error.code ?? null, //domain error code
+            message: error.message,
+            field: error.field,
         })),
     };
 };
@@ -25,9 +23,8 @@ const formaValidationError = (error: ValidationError): ValidationErrorType => {
     const expressError = error as unknown as FieldValidationError;
 
     return {
-        status: HTTPStatus.BAD_REQUEST,
-        source: expressError.path,
-        detail: expressError.msg,
+        message: expressError.msg,
+        field: expressError.path,
     };
 };
 

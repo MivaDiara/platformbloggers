@@ -17,7 +17,11 @@ export async function deleteBlogHandler(
         await blogsService.delete(id);
         res.sendStatus(HTTPStatus.NO_CONTENT);
     }
-    catch (e){
-        res.sendStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
+    catch (err) {
+        if (err instanceof RepositoryNotFoundError) {
+            res.status(HTTPStatus.NOT_FOUND).send({error: err});
+        } else {
+            res.status(HTTPStatus.INTERNAL_SERVER_ERROR).send(`${err}`);
+        }
     }
 }
