@@ -6,12 +6,14 @@ import {BlogsRepository} from "../../../blogs/repositories/blogs.repository";
 import {mapToPostViewModel} from "../../mapping/maps-to-post-view";
 import {blogsService} from "../../../blogs/application/blogs.service";
 import {postsService} from "../../application/posts.service";
+import {blogsQueryRepository} from "../../../blogs/repositories/query.repository";
+import {postsQueryRepository} from "../../repositories/query.reporitory";
 
     export async function createPostHandler(req: Request, res: Response) {
         try {
-            const foundBlog = await blogsService.findOneOrFail(req.body.blogId.toString());
+            const foundBlog = await blogsQueryRepository.findByIdOrFail(req.body.blogId.toString());
             const createdPostId = await postsService.create(req.body);
-            const createdPost = await postsService.findOneOrFail(createdPostId);
+            const createdPost = await postsQueryRepository.findByIdOrFail(createdPostId);
             const postViewModel = mapToPostViewModel(createdPost!, foundBlog!);
             res.status(HTTPStatus.CREATED).send(postViewModel);
         }

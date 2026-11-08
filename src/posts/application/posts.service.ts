@@ -4,16 +4,12 @@ import {PostsType} from "../types/posts";
 import {blogsService} from "../../blogs/application/blogs.service";
 import {PostQueryInput} from "../input/post-query.input";
 import {WithId} from "mongodb";
+import {blogsQueryRepository} from "../../blogs/repositories/query.repository";
 
 export const postsService = {
-    async findMany(queryDto: PostQueryInput): Promise<{items: WithId<PostsType>[], totalCount: number}>{
-        return await postsRepository.findAll(queryDto);
-    },
-    async findOneOrFail(id:string){
-        return await postsRepository.findByIdOrFail(id);
-    },
+
     async create(dto: PostsInputDTO): Promise<string>{
-        const foundBlog = await blogsService.findOneOrFail(dto.blogId);
+        const foundBlog = await blogsQueryRepository.findByIdOrFail(dto.blogId);
         const createdPost: PostsType = {
             title: dto.title,
             shortDescription: dto.shortDescription,

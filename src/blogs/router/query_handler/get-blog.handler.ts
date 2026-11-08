@@ -4,11 +4,12 @@ import {mapToBlogViewModel} from "../../mapping/maps-to-blogs-to-view";
 import {blogsService} from "../../application/blogs.service";
 import {mapToBlogOutput} from "../mappers/map-to-blog-output.util";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
+import {blogsQueryRepository} from "../../repositories/query.repository";
 
 export async function getBlogHandler(req: Request, res: Response) {
     try{
         const id = req.params.id as string;
-        const blog = await blogsService.findOneOrFail(id);
+        const blog = await blogsQueryRepository.findByIdOrFail(id);
         const blogViewModel = mapToBlogOutput(blog!);
         res.send(blogViewModel);
     }

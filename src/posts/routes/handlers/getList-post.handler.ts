@@ -6,6 +6,7 @@ import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-d
 import {PostSortField} from "../../input/post-sort-field";
 import {mapToPostListPaginatedOutput} from "../../mappers/map-to-post-list-paginated-output.util";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
+import {postsQueryRepository} from "../../repositories/query.reporitory";
 
 export async function getListsPostHandler(req: Request, res: Response) {
     try{
@@ -19,7 +20,7 @@ export async function getListsPostHandler(req: Request, res: Response) {
         console.log('🔥 sortBy:', req.query.sortBy);
         console.log('🔥 sortDirection:', req.query.sortDirection);
         const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
-        const {items, totalCount} = await postsService.findMany(queryInput);
+        const {items, totalCount} = await postsQueryRepository.findAll(queryInput);
         const postLostOutput = mapToPostListPaginatedOutput(items, {
             pageNumber: queryInput.pageNumber,
             pageSize: queryInput.pageSize,

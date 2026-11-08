@@ -3,11 +3,12 @@ import {postsRepository} from "../../repositories/posts.repository";
 import {HTTPStatus} from "../../../core/types/HTTPStatus";
 import {postsService} from "../../application/posts.service";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
+import {postsQueryRepository} from "../../repositories/query.reporitory";
 
 export async function deletePostHandler(req: Request, res: Response) {
     try{
         const id = req.params.id as string;
-        await postsService.findOneOrFail(id);
+        await postsQueryRepository.findByIdOrFail(id);
         await postsService.delete(id);
         res.sendStatus(HTTPStatus.NO_CONTENT);
     }

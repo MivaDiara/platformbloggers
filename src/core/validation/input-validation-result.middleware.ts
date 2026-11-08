@@ -11,6 +11,7 @@ import {HTTPStatus} from "../types/HTTPStatus";
 export const createErrorMessages = (
     errors: ValidationErrorType[],
 ): ValidationErrorListOutput => {
+    console.log('🔥 createErrorMessages получил:', errors);
     return {
         errorsMessages: errors.map((error) => ({
             message: error.message,

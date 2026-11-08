@@ -9,17 +9,19 @@ import {postsService} from "../../../posts/application/posts.service";
 import {mapToPostListPaginatedOutput} from "../../../posts/mappers/map-to-post-list-paginated-output.util";
 import {BlogsRepository} from "../../repositories/blogs.repository";
 import {RepositoryNotFoundError} from "../../../core/errors/repository-not-found-error";
+import {blogsQueryRepository} from "../../repositories/query.repository";
+import {postsQueryRepository} from "../../../posts/repositories/query.reporitory";
 
 export async function getPostsInBlogHandler(req: Request, res: Response){
     try{
         const  id  = req.params.id as string;
-        await blogsService.findOneOrFail(id);
+        await blogsQueryRepository.findByIdOrFail(id);
         const sanitizedQuery = matchedData(req,{
             locations: ['query'],
             includeOptionals: true,
         });
         const queryInput = setDefaultSortAndPaginationIfNotExist<PostSortField>(sanitizedQuery);
-        const {items, totalCount} = await blogsService.findPosts(queryInput, id);
+        const {items, totalCount} = await postsQueryRepository.findAllInBlog(id, queryInput);
         const postListOutput = mapToPostListPaginatedOutput(items, {
             pageNumber: queryInput.pageNumber,
             pageSize: queryInput.pageSize,

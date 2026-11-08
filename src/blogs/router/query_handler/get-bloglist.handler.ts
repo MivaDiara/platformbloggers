@@ -10,6 +10,7 @@ import {
 } from "../../../core/helpers/set-default-sort-and-pagination";
 import {BlogSortField} from "../../input/blog-sort-field";
 import {mapToBlogListPaginatedOutput} from "../mappers/map-to-blog-list-paginated-output.util";
+import {blogsQueryRepository} from "../../repositories/query.repository";
 
 
 export async function getBlogListHandler(
@@ -21,7 +22,7 @@ export async function getBlogListHandler(
             includeOptionals: true,
         });
         const queryInput = setDefaultSortAndPaginationIfNotExist<BlogSortField>(sanitizedQuery);
-        const {items, totalCount} = await blogsService.findMany(queryInput);
+        const {items, totalCount} = await blogsQueryRepository.findAll(queryInput);
         const  blogListOutput = mapToBlogListPaginatedOutput(items, {
             pageNumber: queryInput.pageNumber,
             pageSize: queryInput.pageSize,

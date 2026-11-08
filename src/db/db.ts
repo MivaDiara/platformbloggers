@@ -2,13 +2,16 @@ import { Collection, Db, MongoClient } from 'mongodb';
 import { BlogsType } from '../blogs/types/blogs';
 import { PostsType } from '../posts/types/posts';
 import { SETTINGS } from '../core/settings/settings';
+import {UsersType} from "../users/types/users";
 
 const BLOGS_COLLECTION_NAME = 'blogs';
 const POSTS_COLLECTION_NAME = 'posts';
+const USERS_COLLECTION_NAME = 'users';
 
 export let client: MongoClient;
 export let blogsCollection: Collection<BlogsType>;
 export let postCollection: Collection<PostsType>;
+export  let usersCollection: Collection<UsersType>;
 
 // Подключения к бд
 export async function runDB(url: string): Promise<void> {
@@ -18,6 +21,7 @@ export async function runDB(url: string): Promise<void> {
     // Инициализация коллекций
     blogsCollection = db.collection<BlogsType>(BLOGS_COLLECTION_NAME);
     postCollection = db.collection<PostsType>(POSTS_COLLECTION_NAME);
+    usersCollection = db.collection<UsersType>(USERS_COLLECTION_NAME);
 
     try {
         await client.connect();
